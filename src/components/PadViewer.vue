@@ -1,13 +1,14 @@
 <template>
   <div class="pad-viewer">
-    <button @click="goToPrevBank">&#9650;</button>
-    <button @click="goToNextBank">&#9660;</button>
+    <slot></slot>
     <template v-for="(bank, index) in banks">
       <div v-show="index === currentBankInView" :key="`Bank_${index + 1}`">
-        <h3>Bank {{ index + 1 | leftPad }}</h3>
-        <pad-group :samples="bank"></pad-group>
+        <pad-group :samples="bank" :bankNumber="index + 1"></pad-group>
+        <h4>Bank {{ index + 1 | leftPad }} of {{ banks.length | leftPad}}</h4>        
       </div>      
     </template>
+    <button @click="goToPrevBank">&#9650;</button>
+    <button @click="goToNextBank">&#9660;</button>
   </div>
 </template>
 
@@ -16,6 +17,15 @@ import PadGroup from './PadGroup'
 
 export default {
   name: 'pad-viewer',
+  data () {
+    return {
+      currentBankInView: 0,
+      keyMap: {
+        88: this.goToNextBank,
+        90: this.goToPrevBank
+      }
+    }
+  },
   props: {
     banks: {
       type: Array,
@@ -24,21 +34,29 @@ export default {
       }
     }
   },
-  data () {
-    return {
-      currentBankInView: 0
-    }
+  mounted () {
+    this.bindNavigation()
   },
   methods: {
     goToPrevBank () {
       if (this.currentBankInView > 0) {
         this.currentBankInView --
+        this.$store.dispatch('setCurrentBank', this.currentBankInView + 1)
       }
     },
     goToNextBank () {
       if (this.currentBankInView < this.banks.length - 1) {
         this.currentBankInView ++
+        this.$store.dispatch('setCurrentBank', this.currentBankInView + 1)
       }
+    },
+    bindNavigation () {
+      window.addEventListener('keydown', e => {
+        const code = e.keyCode
+        const action = this.keyMap[code]
+
+        if (action) action()
+      })
     }
   },
   filters: {
@@ -53,5 +71,8 @@ export default {
 </script>
 
 <style lang="scss">
-
+  .pad-viewer {
+    display: inline-block;
+    width: 50%;
+  }
 </style>

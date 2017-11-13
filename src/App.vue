@@ -1,12 +1,23 @@
 <template>
   <div id="app">
-    <h1>Kitttopia</h1>
-    <pad-viewer :banks="banks"></pad-viewer>
+    <template v-if="!loaded">
+      <span>Loading...</span>
+    </template>
+    <template v-if="loaded && !error">
+      <h1>Kitttopia</h1>
+      <pad-viewer :banks="banks">
+        <sample-info></sample-info>
+      </pad-viewer>
+    </template>
+    <template v-if="loaded && error">
+      <h2>There was an error fetching the requested pack...</h2>
+    </template>
   </div>
 </template>
 
 <script>
 import PadViewer from './components/PadViewer'
+import SampleInfo from './components/SampleInfo'
 import { mapState } from 'vuex'
 
 export default {
@@ -16,17 +27,18 @@ export default {
   },
   computed: {
     ...mapState({
-      banks: state => state.banks
+      loaded: state => state.loaded,
+      banks: state => state.banks,
+      error: state => state.error
     })
   },
   components: {
-    PadViewer
+    PadViewer,
+    SampleInfo
   }
 }
 </script>
 
 <style lang="scss">
-
-
 
 </style>

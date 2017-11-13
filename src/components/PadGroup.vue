@@ -1,11 +1,11 @@
 <template>
   <section class="pad-group pads-9">
-    <template v-for="sample in samples">
-      <basic-pad :key="sample.name" :sample="sample"></basic-pad>
+    <template v-for="sample, i in samples">
+      <basic-pad :key="sample.name" :sample="sample" :index="i" :bankNumber="bankNumber"></basic-pad>
     </template>
     <!-- Render Blank Pads to make up even grid -->
     <template v-for="r, i in remainder">
-      <basic-pad :key="`blank_${i}`" :isBlank="true"></basic-pad>
+      <basic-pad :key="`blank_${i}`" :isBlank="true" :index="i" :bankNumber="bankNumber"></basic-pad>
     </template>  
   </section>
 </template>
@@ -22,6 +22,10 @@ export default {
       default () {
         return []
       }
+    },
+    bankNumber: {
+      type: Number,
+      default: 0
     }
   },
   computed: {
